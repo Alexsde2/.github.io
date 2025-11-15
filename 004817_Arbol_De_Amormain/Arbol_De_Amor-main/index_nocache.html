@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Árbol de Amor — Acceso (no cache)</title>
+  <!-- Este archivo fuerza recarga añadiendo parámetros a recursos y sobrescribiendo fetch para el SVG -->
+  <style>
+    /* estilo mínimo para evitar parpadeo */
+    body { margin:0; padding:0; background:#fff; }
+  </style>
+  <script>
+    // Cache-bust token fijo para esta sesión (cambia al regenerar el archivo)
+    const CACHE_BUST = 'nocache';
+    // Sobrescribimos fetch para añadir cache-bust al SVG específico
+    (function(){
+      const _fetch = window.fetch.bind(window);
+      window.fetch = function(input, init){
+        try{
+          if(typeof input === 'string' && input.indexOf('Img/treelove.svg') !== -1){
+            input = input + (input.indexOf('?') !== -1 ? '&' : '?') + 'v=' + CACHE_BUST;
+          }
+        }catch(e){ }
+        return _fetch(input, init);
+      };
+    })();
+    // Inserta recursos con cache-bust para forzar recarga
+    function injectResources(){
+      const head = document.getElementsByTagName('head')[0];
+      const link1 = document.createElement('link');
+      link1.rel = 'stylesheet';
+      link1.href = 'Css/style.css?v=' + CACHE_BUST;
+      head.appendChild(link1);
+      const link2 = document.createElement('link');
+      link2.rel = 'stylesheet';
+      link2.media = 'only screen and (max-width: 600px)';
+      link2.href = 'Css/style.mobile.css?v=' + CACHE_BUST;
+      head.appendChild(link2);
+    }
+    injectResources();
+  </script>
+</head>
+<body>
+  <div id="floating-objects"></div>
+  <div class="dedication-text" id="dedication-text"><div class="signature" id="signature"></div></div>
+  <div class="countdown" id="countdown"></div>
+  <div class="tree-container" id="tree-container"></div>
+  <!-- Audio con cache-bust -->
+  <audio src="Music/music1.mp3?v=nocache" id="bg-music" preload="auto"></audio>
+  <!-- Cargamos el script principal con cache-bust para forzar recarga -->
+  <script src="Js/script.js?v=nocache"></script>
+</body>
+</html>
